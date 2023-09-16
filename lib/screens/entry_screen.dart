@@ -30,7 +30,7 @@ class EntryScreen extends StatelessWidget {
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => HomeScreen()));
             },
-            child: Text("Submit"))
+            child: Text("Sign In"))
       ]),
     );
   }
