@@ -1,37 +1,53 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_to_do_app/providers/provider.dart';
 import 'package:flutter_to_do_app/screens/home_screen.dart';
+import 'package:flutter_to_do_app/screens/tasks_screen.dart';
+import 'package:flutter_to_do_app/widgets/add_task_widget.dart';
 
-class EntryScreen extends StatelessWidget {
-  const EntryScreen({super.key});
+class EntryScreen extends ConsumerWidget {
+  EntryScreen({super.key});
+
+  final screenList = [
+    const HomeScreen(),
+    AddTaskWidget(),
+    const TaskScreen(),
+  ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    var currentScreenIndex = ref.watch(currentScreenProvider);
     return Scaffold(
-      body: Column(children: [
-        Image.asset("assets/images/icon.png"),
-        TextField(
-          decoration: InputDecoration(
-            hintText: "Enter your name",
-            labelText: "Username",
-            border: OutlineInputBorder(),
+      body: screenList[currentScreenIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home",
           ),
-        ),
-        TextField(
-          decoration: InputDecoration(
-            hintText: "Enter your password",
-            labelText: "Password",
-            border: OutlineInputBorder(),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add),
+            label: "Add Task",
           ),
-        ),
-        ElevatedButton(
-            onPressed: () {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()));
-            },
-            child: Text("Sign In"))
-      ]),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: "Tasks",
+          ),
+        ],
+        currentIndex: currentScreenIndex,
+        type: BottomNavigationBarType.fixed,
+        onTap: (value) {
+          if (value == 1) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AddTaskWidget();
+                });
+          } else {
+            ref.read(currentScreenProvider.notifier).update((state) => value);
+          }
+        },
+      ),
     );
   }
 }
